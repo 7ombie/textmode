@@ -75,7 +75,7 @@ The `textmode.font.data` and `textmode.palette.data` arrays can be mutated (in
 exactly the same way as `textmode.text.data` above), then uploaded by calling
 the respective method (`textmode.font.upload` or `textmode.palette.upload`).
 
-Note: The API does not add any sugar as the user can best determine the most
+Note: The API does not add any sugar, as the user can best determine the most
 appropriate abstractions for their specific needs.
 
 
@@ -170,16 +170,17 @@ Each block of 64 bytes encodes 32 rows of 16 pixels (one bit per pixel).
 The bits for the individual pixels are stored from left to right, with the
 rows stored from top to bottom.
 
-The default font is currently just a copy of the first 256 characters from
-the 16x32 stroke of [the Terminus Font][2].
+A copy of the font is stored in `terminus.json` as an array of decimal bytes
+(like `aurora.json`).
 
-IMPORTANT: The glyphs (and the character mapping generally) for the upper 128
-characters will be replaced with a more tradtional Higher ASCII character set
-(think PETSCII) soon, reusing Terminus glyphs from higher codepoints. Further,
-some of the ASCII glyphs (like tilde) will likely be replaced with Terminus
-alternatives (for example, opting to use their midline tilde over the one
-they use by default, which is rendered raised, like a caret character).
-Do not depend on the exact shape of any glyph until further notice.
+IMPORTANT: Currently, the included font just copies the first 256 glyphs
+from the 16x32 stroke of [the Terminus Font][2]. The upper 128 characters,
+and some of the control characters will be remapped, and replaced with new
+glyphs (reusing Terminus glyphs from higher codepoints) where appropriate.
+The end result will be a more tradtional Higher ASCII character set (like
+PETSCII), Furthermore, some of the ASCII glyphs (like tilde) will likely
+be replaced soon with better-looking (official, Terminus) alternatives.
+*Please, do not rely on the specific default form of any glyph for now*.
 
 
 Copying & Licensing
