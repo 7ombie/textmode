@@ -13,31 +13,23 @@ const shaders = {
 
 const createShader = function(type, source, context) {
 
-    const GL2 = context;
-    const shader = GL2.createShader(type);
+    const shader = context.createShader(type);
 
-    GL2.shaderSource(shader, source.trim());
-    GL2.compileShader(shader);
+    context.shaderSource(shader, source.trim());
+    context.compileShader(shader);
 
-    if (GL2.getShaderParameter(shader, GL2.COMPILE_STATUS)) return shader;
-
-    console.error("COMPILER FAILED:", GL2.getShaderInfoLog(shader));
-    GL2.deleteShader(shader);
+    return shader;
 };
 
 const createProgram = function(vertexShader, fragmentShader, context) {
 
-    const GL2 = context;
-    const program = GL2.createProgram();
+    const program = context.createProgram();
 
-    GL2.attachShader(program, vertexShader);
-    GL2.attachShader(program, fragmentShader);
-    GL2.linkProgram(program);
+    context.attachShader(program, vertexShader);
+    context.attachShader(program, fragmentShader);
+    context.linkProgram(program);
 
-    if (GL2.getProgramParameter(program, GL2.LINK_STATUS)) return program;
-
-    console.error("LINKER FAILED:", GL2.getProgramInfoLog(program));
-    GL2.deleteProgram(program);
+    return program;
 };
 
 class Texture {
