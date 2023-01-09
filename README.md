@@ -1,5 +1,5 @@
-The Paragon Textmode Module
-===========================
+The Textmode Module
+===================
 
 This project implements a old school, bitmapped, text-based renderer (for
 modern displays), with a simple, low-level, 8-bit JavaScript API.
