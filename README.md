@@ -56,9 +56,13 @@ To make it easy to upload the arrays, they are wrapped by a `Texture` class
 that provides an `upload` method. The method takes no arguments, and simply
 copies the bytes (from the `Uint8Array`) to the GPU (as a texture).
 
-Textmode instances have three attributes, named `text`, `font` and `palette`,
-which reference the three corresponding `Texture` instances. Their data (the
-`Uint8Array`) is referenced by an attribute named `data`:
+The module (`api.js`) only exports the `Textmode` class, but the `Textmode`
+class use the `Texture` class to define three of its attributes.
+
+Each `Textmode` instance has `text`, `font` and `palette` attributes. Each
+of these attributes references the corresponding `Texture` instance, with
+its data (the `Uint8Array`) referenced by an attribute of the `Texture`
+instance, named `data`. For example:
 
 ``` js
 textmode.text.data[0] = 0x24;   // set the first cell's ordinal to a dollar
@@ -67,14 +71,12 @@ textmode.text.upload();         // upload the above mutations to the GPU
 textmode.render();              // make a render call to see the effect
 ```
 
-The `textmode.font.data` and `textmode.palette.data` arrays can be mutated in
-exactly the same way, then uploaded by calling `textmode.font.upload` or
-`textmode.palette.upload` respectively.
+The `textmode.font.data` and `textmode.palette.data` arrays can be mutated (in
+exactly the same way as `textmode.text.data` above), then uploaded by calling
+the respective method (`textmode.font.upload` or `textmode.palette.upload`).
 
 Note: The API does not add any sugar as the user can best determine the most
 appropriate abstractions for their specific needs.
-
-The layout of the bytes within each of the three arrays is described below.
 
 
 ### The Cell State
@@ -91,7 +93,7 @@ colors. The weight is controlled by the *blend slider* (which is described
 later in this document).
 
 
-### The Palette
+### The Default Palette
 
 The palette array (`textmode.palette.data`) contains 768 bytes, which define
 256 colors, formatted in (24-bit) RGB.
@@ -150,13 +152,16 @@ get block-copied to a different location on screen), but in those cases, the
 colors are preserved anyway.
 
 Note: Somewhat counter-intuitively, GPU performance would be harmed more by
-selectively blending colors for those cells that contain cursors than it is
-by consistently blending every cell.
+logic that checked and conditionally blended colors for only those cells that
+currently contain a cursor than it is effected by unconditionally (but always,
+consistently) blending every cell (even when `blend` is exactly `0` or `1`).
 
-Note: The shader is very fast.
+Note: The main thread is notoriously unreliable when it comes to handling user
+input with low-latency. Nonetheless, the shader is logically simple and memory
+efficient, making it very fast.
 
 
-### The Font & Glyphs
+### The Default Font
 
 The font array (`textmode.font.data`) contains a bitmapped, 16x32 font,
 stored as an array of 16,384 bytes, divided into 256 blocks of 64 bytes.
@@ -195,8 +200,9 @@ which is permissive, though also viral.
 
 The [Aurora Palette][1] was developed as part of a toolkit for GrafX2. The
 palette was shared with the [LoSpec Community][5] by user [DawnBringer][6].
-I have read that palettes are not considered intellectual property, so the
-palette has effectively been placed in the public domain.
+I read online that palettes are not a form of intellectual property, so no
+license could apply to one. In any case, the creator wanted to share the
+palette, and it seems to be fairly popular and widely used.
 
 **COPYRIGHT C YOUNGER (7OMBIE) 2023**
 
