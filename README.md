@@ -57,7 +57,7 @@ that provides an `upload` method. The method takes no arguments, and simply
 copies the bytes (from the `Uint8Array`) to the GPU (as a texture).
 
 The module (`api.js`) only exports the `Textmode` class, but the `Textmode`
-class use the `Texture` class to define three of its attributes.
+class uses instances of the `Texture` class for three of its attributes.
 
 Each `Textmode` instance has `text`, `font` and `palette` attributes. Each
 of these attributes references the corresponding `Texture` instance, with
