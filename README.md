@@ -12,7 +12,11 @@ The Textmode API
 ----------------
 
 The API entrypoint is an ES6 module named `api.js` that wraps a WebGL2 shader,
-and exports a single class named `Textmode`.
+and exports a single class named `Textmode` (which is the default export).
+
+``` js
+import Textmode from "./textmode/api.js"
+```
 
 The `Textmode` class can be instantiated to create *textmode instances*, each
 with any number of rows and columns (passed as arguments to the constructor):
@@ -44,23 +48,23 @@ Each textmode instance has three associated arrays of bytes, one for the
 state of the character cells, another for the font, and a third for the
 palette. All three arrays use the `Uint8Array` type.
 
-While most programs will use default font and palette, all three arrays can
-be mutated, as required, then uploaded to the GPU so their new state will be
-rendered (by the shader) during the next render call:
+While most programs will use the default font and palette, all three arrays
+can be mutated, as required, then uploaded to the GPU, so that their new
+state will be rendered (by the shader) during the next render call.
 
 To make it easy to upload the arrays, they are wrapped by a `Texture` class
-that provides an `upload` method, which takes no args, and simply copies the
-bytes (from the `Uint8Array`) to the GPU (as a texture it can access).
+that provides an `upload` method. The method takes no arguments, and simply
+copies the bytes (from the `Uint8Array`) to the GPU (as a texture).
 
 Textmode instances have three attributes, named `text`, `font` and `palette`,
-which reference the three corresponding `Texture` instances. Their data is
-stored in a `Uint8Array` attribute, named `data`. For example:
+which reference the three corresponding `Texture` instances. Their data (the
+`Uint8Array`) is referenced by an attribute named `data`:
 
 ``` js
 textmode.text.data[0] = 0x24;   // set the first cell's ordinal to a dollar
 textmode.text.data[1] = 0x0F;   // set the corresponding ink color to white
 textmode.text.upload();         // upload the above mutations to the GPU
-textmode.render();              // and finally, make a render call
+textmode.render();              // make a render call to see the effect
 ```
 
 The `textmode.font.data` and `textmode.palette.data` arrays can be mutated in
@@ -90,13 +94,9 @@ later in this document).
 ### The Palette
 
 The palette array (`textmode.palette.data`) contains 768 bytes, which define
-256 colors, in the 24-bit RGB format.
+256 colors, formatted in (24-bit) RGB.
 
-The three palette indices that describe each cell are indices into the
-palette array. This limits the number of on-sceen colors to 256, but
-permits any 256 colors to be used.
-
-By default, the textmode uses [the Aurora Palette (from LoSpec)][1], which
+By default, the textmode uses [the Aurora Palette][1] (from LoSpec), which
 is stored in `aurora.json` as an array of decimal bytes (numbers between `0`
 and `255`).
 
@@ -109,7 +109,7 @@ fully synchronized cursors (without modifying the palette).
 
 Each `Textmode` instance has an attribute named `blend`, which is a `Number`
 between `0` and `1`. It can be modified directly or by passing an (optional)
-argument to the `render` method when making a render call.
+argument to the `render` method when making a render call:
 
 ``` js
 textmode.render(.5);
@@ -132,10 +132,12 @@ colors are the same (black), which prevents the blend slider from affecting
 the background color of the cell (the slider only mixes black with black),
 even if the ink is set to contrast with the paper.
 
-When changing the background color of a cell, both the paper and tint should
-be set to the new color. To render one or more cursors, update the tint byte
-of any cell containing a cursor to the color of the cursor, then animate the
-apparent opacity of the cursor using the blend slider.
+When changing the background color of a cell, both the paper and tint will
+normally be set to the new color.
+
+To render one or more cursors, update the tint byte of any cell containing a
+cursor to the color of that cursor, then animate the apparent opacity of the
+cursor using the blend slider.
 
 Note: The textmode uses RGB color. There is no direct support for opacity.
 
@@ -156,14 +158,14 @@ Note: The shader is very fast.
 
 ### The Font & Glyphs
 
-The font array (`textmode.font.data`) contains a 16x32x1px bitmapped font,
+The font array (`textmode.font.data`) contains a bitmapped, 16x32 font,
 stored as an array of 16,384 bytes, divided into 256 blocks of 64 bytes.
 Each block of 64 bytes encodes 32 rows of 16 pixels (one bit per pixel).
 
 The bits for the individual pixels are stored from left to right, with the
 rows stored from top to bottom.
 
-The default font is a currently just a copy of the first 256 characters from
+The default font is currently just a copy of the first 256 characters from
 the 16x32 stroke of [the Terminus Font][2].
 
 IMPORTANT: The glyphs (and the character mapping generally) for the upper 128
@@ -189,12 +191,12 @@ the terms of [the GPLv3 License][3] (or any later version you may prefer).
 The font and palette are not original to this project.
 
 The [Terminus Font][2] uses the [SIL Open Font License, Version 1.1][4],
-which is viral.
+which is permissive, though also viral.
 
 The [Aurora Palette][1] was developed as part of a toolkit for GrafX2. The
 palette was shared with the [LoSpec Community][5] by user [DawnBringer][6].
-As far as I understand, palettes are not considered intellectual property,
-so there are no legal issues.
+I have read that palettes are not considered intellectual property, so the
+palette has effectively been placed in the public domain.
 
 **COPYRIGHT C YOUNGER (7OMBIE) 2023**
 

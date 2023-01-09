@@ -1,5 +1,5 @@
-import paletteArray from "./aurora.json" assert {type: "json"};
-import fontArray from "./terminus.json" assert {type: "json"};
+import paletteArray from "./aurora.json" assert {type: "json"}
+import fontArray from "./terminus.json" assert {type: "json"}
 
 const sources = {
     vert: new URL("vert.glsl", import.meta.url),
