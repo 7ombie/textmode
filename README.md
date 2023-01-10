@@ -59,33 +59,32 @@ copies the bytes (from the `Uint8Array`) to the GPU (as a texture).
 The module (`api.js`) only exports the `Textmode` class, but the `Textmode`
 class uses instances of the `Texture` class for three of its attributes.
 
-Each `Textmode` instance has `text`, `font` and `palette` attributes. Each
-of these attributes references the corresponding `Texture` instance, with
-its data (the `Uint8Array`) referenced by an attribute of the `Texture`
-instance, named `data`. For example:
+Each textmode instance has `state`, `font` and `palette` attributes, which
+each reference the corresponding `Texture` instance, with the `Uint8Array`
+bound to the `array` attribute of the texture. For example:
 
 ``` js
-textmode.text.data[0] = 0x24;   // set the first cell's ordinal to a dollar
-textmode.text.data[1] = 0x0F;   // set the corresponding ink color to white
-textmode.text.upload();         // upload the above mutations to the GPU
-textmode.render();              // make a render call to see the effect
+textmode.state.array[0] = 0x24;  // set the first cell's ordinal to a dollar
+textmode.state.array[1] = 0x0F;  // set the corresponding ink color to white
+textmode.state.update();         // upload the above mutations to the GPU
+textmode.render();               // make a render call to see the effect
 ```
 
-The `textmode.font.data` and `textmode.palette.data` arrays can be mutated (in
-exactly the same way as `textmode.text.data` above), then uploaded by calling
-the respective method (`textmode.font.upload` or `textmode.palette.upload`).
+The `textmode.font.array` and `textmode.palette.array` can be mutated in the
+exact the same way, and uploaded to the GPU by calling `textmode.font.upload`
+or `textmode.palette.upload`, respectively.
 
-Note: The API does not add any sugar, as the user can best determine the most
-appropriate abstractions for their specific needs.
+Note: The API does not add any sugar. The goal is to provide a low-level API
+that can be easily abstracted as required.
 
 
 ### The Cell State
 
-The text array (`textmode.text.data`) contains four bytes for each character
-cell (`rows * columns * 4`). The first (leftmost) byte of the block is known
-as the *ordinal*, and indicates which glyph to render. The remaining three
-bytes are palette indices, which are named (left to right) *ink*, *paper*
-and *tint*. These three bytes determine the colors of the cell.
+The state array (`textmode.state.array`) is divided into blocks of four bytes,
+with each block of bytes representing a character cell. The first (leftmost)
+byte is known as the *ordinal*, and indicates which glyph to use, while the
+remaining three bytes are palette indices, which are named (left to right)
+*ink*, *paper* and *tint*. These three bytes determine the colors of the cell.
 
 The pixels within the glyph are rendered in the ink color, while the pixels
 in the background are rendered using a weighted mixture of the paper and tint
@@ -95,7 +94,7 @@ later in this document).
 
 ### The Default Palette
 
-The palette array (`textmode.palette.data`) contains 768 bytes, which define
+The palette array (`textmode.palette.array`) contains 768 bytes, which define
 256 colors, formatted in (24-bit) RGB.
 
 By default, the textmode uses [the Aurora Palette][1] (from LoSpec), which
@@ -163,7 +162,7 @@ efficient, making it very fast.
 
 ### The Default Font
 
-The font array (`textmode.font.data`) contains a bitmapped, 16x32 font,
+The font array (`textmode.font.array`) contains a bitmapped, 16x32 font,
 stored as an array of 16,384 bytes, divided into 256 blocks of 64 bytes.
 Each block of 64 bytes encodes 32 rows of 16 pixels (one bit per pixel).
 

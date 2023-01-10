@@ -6,7 +6,7 @@ precision highp sampler2D;
 precision highp usampler2D;
 
 uniform float BLEND;
-uniform usampler2D TEXT;
+uniform usampler2D STATE;
 uniform usampler2D FONT;
 uniform sampler2D PALETTE;
 
@@ -24,7 +24,7 @@ void main() {
     uint y = height - uint(gl_FragCoord.y);
 
     uint cellIndex = (y / cellHeight) * columns + (x / cellWidth);
-    uvec4 cell = texelFetch(TEXT, ivec2(cellIndex, 0), 0);
+    uvec4 cell = texelFetch(STATE, ivec2(cellIndex, 0), 0);
 
     uint localIndex = (y % cellHeight) * cellWidth + (x % cellWidth);
     uint globalIndex = cell[0] * cellLength + localIndex;

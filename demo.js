@@ -4,12 +4,13 @@ const textmode = new Textmode(10, 20);
 
 document.body.append(textmode.canvas);
 
-textmode.palette.data[0] = 35;
+textmode.palette.array[0] = 200;
 textmode.palette.upload();
 
-textmode.text.data[0] = 62;
-textmode.text.data[1] = 16;
-textmode.text.data[3] = 10;
-textmode.text.upload();
-
+textmode.state.array[0] = 62;
+textmode.state.array[1] = 16;
+textmode.state.array[3] = 10;
+textmode.state.upload();
 textmode.render(.5);
+
+console.log(textmode);
