@@ -93,18 +93,19 @@ export default class Textmode {
         this.byteCount = this.cellCount * 4;
         this.canvas = document.createElement("canvas");
         this.canvas.style.imageRendering = "pixelated";
-        this.width = this.canvas.width = columns * 16;
-        this.height = this.canvas.height = rows * 32;
+
+        const width = this.canvas.width = columns * 16;
+        const height = this.canvas.height = rows * 32;
 
         const GL2 = this.#private.GL2 = this.canvas.getContext("webgl2");
 
-        const interpolee = `height = ${this.height}u, columns = ${columns}u`;
+        const interpolee = `height = ${height}u, columns = ${columns}u`;
         const fragSource = shaders.frag.replace("...", interpolee);
         const vertShader = createShader(GL2.VERTEX_SHADER, shaders.vert, GL2);
         const fragShader = createShader(GL2.FRAGMENT_SHADER, fragSource, GL2);
         const GL2program = createProgram(vertShader, fragShader, GL2);
 
-        GL2.viewport(0, 0, this.width, this.height);
+        GL2.viewport(0, 0, width, height);
         GL2.useProgram(GL2program);
 
         const vertexArray = GL2.createVertexArray();

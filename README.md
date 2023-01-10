@@ -182,6 +182,28 @@ be replaced soon with better-looking (official, Terminus) alternatives.
 *Please, do not rely on the specific default form of any glyph for now*.
 
 
+Display Attributes
+------------------
+
+As well as the textmode attributes that have been described above (`canvas`,
+`state`, `font`, `palette` and `blend`), textmode instances also have a
+set of four readonly attributes (each an integer `Number`) that are
+useful when describing the textmode display:
+
++ `rowCount`: The number of rows.
++ `columnCount`: The number of columns.
++ `cellCount`: The number of cells (`rowCount * columnCount`).
++ `byteCount`: The number of bytes in the state array (`cellCount * 4`).
+
+Textmode instances are frozen during construction. The only mutable property
+they have is `blend`. Objects that are bound to textmode instances (like the
+three `Texture` instances) are regular, mutable objects.
+
+Textmode instances do have other internal properties, but they are all kept
+private. `Texture` instances also have a number of internal properties, but
+only the `array` property (and `upload` method) are public.
+
+
 Copying & Licensing
 -------------------
 
