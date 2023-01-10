@@ -4,8 +4,26 @@ The Textmode Module
 This project implements a old school, bitmapped, text-based renderer (for
 modern displays), with a simple, low-level, 8-bit JavaScript API.
 
-The code is fully functional (and free of known bugs), but the project needs
-documentation, and testing in anything other than Chrome.
+The implementation is clean, fast and fully functional (and free of known
+bugs), though it is new, and has not been tested in the wild to any extent.
+
+**IMPORTANT**: The implementation is compliant with web standards and mature
+proposals (and not relient on any controversial proposals). However, there is
+no special support for less advanced browsers, and as such, the library is
+unlikely to work outside of anything Chromium-based for years to come.
+
+**IMPORTANT**: The character set and font are unstable. This readme contains
+a section named *The Default Font* that contains more information.
+
+Note: Currently FireFox and Safari fail (at the first hurdle), as neither
+browser is able to import values from JSON files.
+
+The licensing is open source, but viral. See the end of this readme for more
+information.
+
+The (entire) Textmode API is small and simple (using private attributes to
+hide all of the WebGL2 internals). As such, it can be described and fully
+documented in this readme (and is).
 
 
 The Textmode API
@@ -172,15 +190,14 @@ rows stored from top to bottom.
 A copy of the font is stored in `terminus.json` as an array of decimal bytes
 (like `aurora.json`).
 
-IMPORTANT: Currently, the included font just copies the first 256 glyphs
-from the 16x32 stroke of [the Terminus Font][2]. The upper 128 characters,
-and some of the control characters will be remapped, and replaced with new
-glyphs (reusing Terminus glyphs from higher codepoints) where appropriate.
-The end result will be a more tradtional Higher ASCII character set (like
-PETSCII), Furthermore, some of the ASCII glyphs (like tilde) will likely
-be replaced soon with better-looking (official, Terminus) alternatives.
-*Please, do not rely on the specific default form of any glyph for now*.
-
+**IMPORTANT**: Currently, the included font just copies the first 256 glyphs
+from the 16x32 stroke of [the Terminus Font][2]. The upper 128 characters, and
+some of the control characters will be remapped, and replaced with new glyphs
+(reusing Terminus glyphs from higher codepoints) where appropriate. The end
+result will be a more tradtional Higher ASCII character set (like PETSCII),
+Furthermore, some of the ASCII glyphs (like tilde) will likely be replaced
+soon, with better-looking (official, Terminus) alternatives. *Please, do
+not rely on the specific default form of any glyph for now*.
 
 Display Attributes
 ------------------
