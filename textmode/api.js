@@ -80,15 +80,19 @@ export default class Textmode {
 
     constructor(rows=25, columns=80) {
 
+        this.blend = 0;
+        this.rowCount = rows;
+        this.columnCount = columns;
+        this.cellCount = rows * columns;
+        this.byteCount = this.cellCount * 4;
         this.canvas = document.createElement("canvas");
-
-        [this.rows, this.columns] = [rows, columns];
-        [this.blend, this.canvas.style.imageRendering] = [0, "pixelated"];
-        [this.canvas.width, this.canvas.height] = [columns * 16, rows * 32];
+        this.canvas.style.imageRendering = "pixelated";
+        this.width = this.canvas.width = columns * 16;
+        this.height = this.canvas.height = rows * 32;
 
         const GL2 = this.GL2 = this.canvas.getContext("webgl2");
 
-        const interpolee = `height = ${rows * 32}u, columns = ${columns}u`;
+        const interpolee = `height = ${this.height}u, columns = ${columns}u`;
         const fragSource = shaders.frag.replace("...", interpolee);
         const vertShader = createShader(GL2.VERTEX_SHADER, shaders.vert, GL2);
         const fragShader = createShader(GL2.FRAGMENT_SHADER, fragSource, GL2);
@@ -96,7 +100,7 @@ export default class Textmode {
         this.program = createProgram(vertShader, fragShader, GL2);
         this.uniform = GL2.getUniformLocation(this.program, "BLEND");
 
-        GL2.viewport(0, 0, this.canvas.width, this.canvas.height);
+        GL2.viewport(0, 0, this.width, this.height);
         GL2.useProgram(this.program);
 
         const vertexArray = GL2.createVertexArray();
@@ -109,7 +113,7 @@ export default class Textmode {
         GL2.enableVertexAttribArray(vertexLocation);
         GL2.vertexAttribPointer(vertexLocation, 2, GL2.FLOAT, false, 0, 0);
 
-        this.text = new Texture(this, "TEXT", columns * rows * 4);
+        this.text = new Texture(this, "TEXT", this.byteCount);
         this.font = new Texture(this, "FONT", fontArray);
         this.palette = new Texture(this, "PALETTE", paletteArray, true);
     }
