@@ -15,12 +15,12 @@ unlikely to work outside of anything Chromium-based for years to come.
 Note: Currently FireFox and Safari fail (at the first hurdle), as neither
 browser is able to import values from JSON files.
 
-**IMPORTANT**: The character set and font are unstable. This readme contains
-a section named *The Default Font* (towards the end of the document) that
-provides more information.
+**IMPORTANT**: The character set and font are currently unstable. This readme
+contains a section named *The Default Font* (towards the end of the document)
+that provides more information.
 
 The licensing is open source (and viral). Refer to the *Copying & Licensing*
-section at very end of this readme for more information.
+section (at very end of this readme) for more information.
 
 
 The Textmode API
@@ -31,7 +31,7 @@ hide all of the WebGL2 internals). It is be described and fully documented
 below.
 
 The API entrypoint is an ES6 module named `api.js` that wraps a WebGL2 shader,
-and exports a single class named `Textmode` (which is the default export).
+and exports a single class named `Textmode` (which is the default export):
 
 ``` js
 import Textmode from "./textmode/api.js"
@@ -50,8 +50,9 @@ The rationale for these defaults is beyond the scope of this introducton.
 
 ### Render Calls
 
-Each textmode instance has an associated canvas, which must be appended to
-the DOM to be visible, and a render call must be made to run the shader:
+Each textmode instance has an associated canvas element bound to its `canvas`
+property. The canvas must be appended to the DOM to be visible, and a render
+call must be made to apply the shader to the canvas frame buffer:
 
 ``` js
 document.body.append(textmode.canvas);
