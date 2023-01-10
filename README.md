@@ -1,7 +1,7 @@
 The Textmode Module
 ===================
 
-This project implements a old school, bitmapped, text-based renderer (for
+This project implements an old school, bitmapped, text-based renderer (for
 modern displays), with a simple, low-level, 8-bit JavaScript API.
 
 The implementation is clean, fast and fully functional (and free of known
@@ -12,22 +12,23 @@ proposals (and not relient on any controversial proposals). However, there is
 no special support for less advanced browsers, and as such, the library is
 unlikely to work outside of anything Chromium-based for years to come.
 
-**IMPORTANT**: The character set and font are unstable. This readme contains
-a section named *The Default Font* that contains more information.
-
 Note: Currently FireFox and Safari fail (at the first hurdle), as neither
 browser is able to import values from JSON files.
 
-The licensing is open source, but viral. See the end of this readme for more
-information.
+**IMPORTANT**: The character set and font are unstable. This readme contains
+a section named *The Default Font* (towards the end of the document) that
+provides more information.
 
-The (entire) Textmode API is small and simple (using private attributes to
-hide all of the WebGL2 internals). As such, it can be described and fully
-documented in this readme (and is).
+The licensing is open source (and viral). Refer to the *Copying & Licensing*
+section at very end of this readme for more information.
 
 
 The Textmode API
 ----------------
+
+The (entire) Textmode API is small and simple (using private attributes to
+hide all of the WebGL2 internals). It is be described and fully documented
+below.
 
 The API entrypoint is an ES6 module named `api.js` that wraps a WebGL2 shader,
 and exports a single class named `Textmode` (which is the default export).
