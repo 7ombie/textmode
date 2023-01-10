@@ -11,23 +11,23 @@ const shaders = {
     frag: await fetch(sources.frag).then(response => response.text()),
 };
 
-const createShader = function(type, source, context) {
+const createShader = function(type, source, GL2) {
 
-    const shader = context.createShader(type);
+    const shader = GL2.createShader(type);
 
-    context.shaderSource(shader, source.trim());
-    context.compileShader(shader);
+    GL2.shaderSource(shader, source.trim());
+    GL2.compileShader(shader);
 
     return shader;
 };
 
-const createProgram = function(vertexShader, fragmentShader, context) {
+const createProgram = function(vertexShader, fragmentShader, GL2) {
 
-    const program = context.createProgram();
+    const program = GL2.createProgram();
 
-    context.attachShader(program, vertexShader);
-    context.attachShader(program, fragmentShader);
-    context.linkProgram(program);
+    GL2.attachShader(program, vertexShader);
+    GL2.attachShader(program, fragmentShader);
+    GL2.linkProgram(program);
 
     return program;
 };
@@ -36,14 +36,15 @@ class Texture {
 
     static index = 0;
 
-    constructor(name, data, textmode, convert=false) {
+    constructor(textmode, name, data, convert=false) {
 
-        const GL2 = this.context = textmode.context;
-        const locations = textmode.locations;
+        const GL2 = this.GL2 = textmode.GL2;
+        const location = GL2.getUniformLocation(textmode.program, name);
 
         this.data = new Uint8Array(data);
-        this.length = this.data.length / (convert ? 3 : 4);
-        this.sampler = GL2.createTexture();
+
+        this.blocksize = this.data.length / (convert ? 3 : 4);
+        this.sampler2D = GL2.createTexture();
 
         this.format = convert ? GL2.RGB : GL2.RGBA_INTEGER;
         this.internalFormat = convert ? GL2.RGB8 : GL2.RGBA8UI;
@@ -51,25 +52,21 @@ class Texture {
         this.index = Texture.index++;
         this.internalIndex = GL2.TEXTURE0 + this.index;
 
-        locations[name] = GL2.getUniformLocation(textmode.program, name);
-
         this.upload();
 
         GL2.texParameteri(GL2.TEXTURE_2D, GL2.TEXTURE_MIN_FILTER, GL2.NEAREST);
         GL2.texParameteri(GL2.TEXTURE_2D, GL2.TEXTURE_MAG_FILTER, GL2.NEAREST);
-        GL2.uniform1i(locations[name], this.index);
+        GL2.uniform1i(location, this.index);
     }
 
     upload() {
 
-        const GL2 = this.context;
-
-        GL2.activeTexture(this.internalIndex);
-        GL2.bindTexture(GL2.TEXTURE_2D, this.sampler);
-        GL2.texImage2D(
-            GL2.TEXTURE_2D, 0, this.internalFormat,
-            this.length, 1, 0, this.format,
-            GL2.UNSIGNED_BYTE, this.data
+        this.GL2.activeTexture(this.internalIndex);
+        this.GL2.bindTexture(this.GL2.TEXTURE_2D, this.sampler2D);
+        this.GL2.texImage2D(
+            this.GL2.TEXTURE_2D, 0,
+            this.internalFormat, this.blocksize, 1, 0,
+            this.format, this.GL2.UNSIGNED_BYTE, this.data
         );
     }
 }
@@ -83,50 +80,43 @@ export default class Textmode {
 
     constructor(rows=25, columns=80) {
 
-        [this.blend, this.rows, this.columns] = [0, rows, columns];
+        this.canvas = document.createElement("canvas");
 
-        const locations = this.locations = Object.create(null);
-        const canvas = this.canvas = document.createElement("canvas");
-        const GL2 = this.context = canvas.getContext("webgl2");
+        [this.rows, this.columns] = [rows, columns];
+        [this.blend, this.canvas.style.imageRendering] = [0, "pixelated"];
+        [this.canvas.width, this.canvas.height] = [columns * 16, rows * 32];
 
-        [canvas.width, canvas.height] = [columns * 16, rows * 32];
+        const GL2 = this.GL2 = this.canvas.getContext("webgl2");
 
-        canvas.style.imageRendering = "pixelated";
-
-        GL2.viewport(0, 0, canvas.width, canvas.height);
-
-        const interpolee = `height = ${canvas.height}u, columns = ${columns}u`;
+        const interpolee = `height = ${rows * 32}u, columns = ${columns}u`;
         const fragSource = shaders.frag.replace("...", interpolee);
         const vertShader = createShader(GL2.VERTEX_SHADER, shaders.vert, GL2);
         const fragShader = createShader(GL2.FRAGMENT_SHADER, fragSource, GL2);
 
         this.program = createProgram(vertShader, fragShader, GL2);
+        this.uniform = GL2.getUniformLocation(this.program, "BLEND");
 
+        GL2.viewport(0, 0, this.canvas.width, this.canvas.height);
         GL2.useProgram(this.program);
 
-        locations.BLEND = GL2.getUniformLocation(this.program, "BLEND");
-
-        const VAO = GL2.createVertexArray();
-
-        locations.vertices = GL2.getAttribLocation(this.program, "vertices");
+        const vertexArray = GL2.createVertexArray();
+        const vertexLocation = GL2.getAttribLocation(this.program, "vertices");
 
         GL2.bindBuffer(GL2.ARRAY_BUFFER, GL2.createBuffer());
         GL2.bufferData(GL2.ARRAY_BUFFER, Textmode.#vertices, GL2.STATIC_DRAW);
 
-        GL2.bindVertexArray(VAO);
-        GL2.enableVertexAttribArray(locations.vertices);
-        GL2.vertexAttribPointer(locations.vertices, 2, GL2.FLOAT, false, 0, 0);
+        GL2.bindVertexArray(vertexArray);
+        GL2.enableVertexAttribArray(vertexLocation);
+        GL2.vertexAttribPointer(vertexLocation, 2, GL2.FLOAT, false, 0, 0);
 
-        this.text = new Texture("TEXT", columns * rows * 4, this);
-        this.font = new Texture("FONT", fontArray, this);
-        this.palette = new Texture("PALETTE", paletteArray, this, true);
+        this.text = new Texture(this, "TEXT", columns * rows * 4);
+        this.font = new Texture(this, "FONT", fontArray);
+        this.palette = new Texture(this, "PALETTE", paletteArray, true);
     }
 
     render(blend=null) {
 
-        const GL2 = this.context;
-
-        GL2.uniform1f(this.locations.BLEND, this.blend = blend ?? this.blend);
-        GL2.drawArrays(GL2.TRIANGLES, 0, 6);
+        this.GL2.uniform1f(this.uniform, this.blend = blend ?? this.blend);
+        this.GL2.drawArrays(this.GL2.TRIANGLES, 0, 6);
     }
 }
