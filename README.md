@@ -175,10 +175,6 @@ logic that checked and conditionally blended colors for only those cells that
 currently contain a cursor than it is effected by unconditionally (but always,
 consistently) blending every cell (even when `blend` is exactly `0` or `1`).
 
-Note: The main thread is notoriously unreliable when it comes to handling user
-input with low-latency. Nonetheless, the shader is logically simple and memory
-efficient, making it very fast.
-
 
 ### The Default Font
 
