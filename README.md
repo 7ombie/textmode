@@ -86,7 +86,7 @@ bound to the `array` attribute of the texture. For example:
 ``` js
 textmode.state.array[0] = 0x24;  // set the first cell's ordinal to a dollar
 textmode.state.array[1] = 0x0F;  // set the corresponding ink color to white
-textmode.state.update();         // upload the above mutations to the GPU
+textmode.state.upload();         // upload the above mutations to the GPU
 textmode.render();               // make a render call to see the effect
 ```
 
