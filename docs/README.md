@@ -331,18 +331,20 @@ const fontLocation = gl.getUniformLocation(textmode.program, "font");
 Copying & Licensing
 -------------------
 
-The licenses this project uses are much larger than the project itself. For
-that reason, links to the licenses, and general declarations in this README
-(instead of at the top of each source file) will have to suffice for now.
-Please open an issue, if any of this is a problem at all.
+The various licenses that this project uses are much larger than the project
+itself. For that reason, this readme includes links to the licenses, and this
+general declaration (instead of notices at the top of each source file).
 
-The code (`api.js`, `frag.glsl` and `vert.glsl`) is available to you under
-the terms of [the GPLv3 License][3] (or any later version you may prefer).
+The code (`element.js`, `frag.glsl` and `vert.glsl`) is published under the
+terms of [the GPL License][3] (version 3 or later).
+
+This readme (and any documentation added to the `docs` directory over time)
+uses the [GNU Free Documentation License][8] (version 1.3 or later).
 
 The font and palette are not original to this project.
 
-The [Terminus Font][2] uses the [SIL Open Font License, Version 1.1][4],
-which is permissive, though also viral.
+The [Terminus Font][2] uses the [SIL Open Font License, Version 1.1][4]
+(which is fully open, though also viral).
 
 The [Aurora Palette][1] was developed as part of a toolkit for GrafX2. The
 palette was shared with the [LoSpec Community][5] by user [DawnBringer][6].
@@ -350,8 +352,8 @@ I read online that palettes are not a form of intellectual property, so no
 license could apply to one. In any case, the creator wanted to share the
 palette, and it seems to be fairly popular and widely used.
 
-The author would like to mention their appreciation for the invaluable tips
-and guidance that were sourced from the [*WebGL2 Fundamentals* website][1].
+The author would also like to mention their appreciation for the invaluable
+tips and guidance they took from the [*WebGL2 Fundamentals* website][1].
 
 **COPYRIGHT C YOUNGER (7OMBIE) 2023**
 
@@ -363,3 +365,4 @@ and guidance that were sourced from the [*WebGL2 Fundamentals* website][1].
 [5]: https://lospec.com
 [6]: https://pixeljoint.com/p/23821.htm
 [7]: https://webgl2fundamentals.org
+[8]: https://www.gnu.org/licenses/fdl-1.3.en.html
