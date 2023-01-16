@@ -42,10 +42,10 @@ class Texture {
 
         const location = GPU.getUniformLocation(program, name);
 
-        this.#context = GPU;
-        this.#convert = convert;
-
+        this.pitch = convert ? 3 : 4;
         this.array = new Uint8Array(data);
+
+        this.#context = GPU;
         this.#sampler2D = GPU.createTexture();
 
         this.#format = convert ? GPU.RGB : GPU.RGBA_INTEGER;
@@ -61,6 +61,8 @@ class Texture {
         GPU.uniform1i(location, this.#index);
     }
 
+    get blocks() { return this.array.length / this.pitch }
+
     upload() {
 
         const GPU = this.#context;
@@ -68,9 +70,8 @@ class Texture {
         GPU.activeTexture(this.#GPUindex);
         GPU.bindTexture(GPU.TEXTURE_2D, this.#sampler2D);
         GPU.texImage2D(
-            GPU.TEXTURE_2D, 0, this.#GPUformat,
-            this.array.length / (this.#convert ? 3 : 4),
-            1, 0, this.#format, GPU.UNSIGNED_BYTE, this.array
+            GPU.TEXTURE_2D, 0, this.#GPUformat, this.blocks, 1, 0,
+            this.#format, GPU.UNSIGNED_BYTE, this.array
         );
     }
 }

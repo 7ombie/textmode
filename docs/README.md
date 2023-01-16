@@ -242,8 +242,8 @@ alternatives (that are provided by Terminus).
 *The default form of any glyph (and even its mapping) may change soon*.
 
 
-Display Attributes
-------------------
+Textmode Attributes
+-------------------
 
 As well as the textmode attributes that have been described above (`state`,
 `font`, `palette` and `fader`), textmode elements also have a set of four
@@ -301,6 +301,29 @@ will fit) back to the new state array, but this is beyond the scope of the
 so it must be done manually, as and where required.
 
 
+Texture Attributes
+------------------
+
+As well as the `array` attribute and `update` method, each texture instance
+also has a couple of readonly computed properties:
+
++ `blocks`: The number of blocks (texels) in the `Uint8Array`.
++ `pitch`: The number of bytes in each block (on the CPU).
+
+Note: The value of the `pitch` property is always `3` for palette textures,
+and `4` for state and font textures. The `blocks` attribute is constant for
+the font and palette (which are always the same length), but varies for the
+state array, depending on the (current) number of columns and rows.
+
+The `pitch` and `blocks` attributes align well with the structure of the data
+in the state and palette arrays. The state uses four bytes per texel *and* per
+character cell, while the palette uses three bytes per texel *and* per color.
+
+These attributes are less applicable to the font, where a texel corresponds
+to an (aligned) pair of rows within a glyph (requiring sixteen texels to
+encode each glyph).
+
+
 The Program Attribute
 ---------------------
 
@@ -311,17 +334,16 @@ of the implementation has been left open.
 
 The *program attribute* (`textmode.program`) references the `WebGLProgram`
 instance that is running the shader program on the GPU. On its own, it is
-not especially useful, but textmode elements are canvas elements, so you
-can also access the `WebGLRenderingContext` in the usual way:
+not especially useful, but textmode elements are canvases, so you can also
+access the `WebGLRenderingContext` using the `getContext` method:
 
 ``` js
-
 const gl = textmode.getContext("webgl2");
 ```
 
 From here, assuming that you know the WebGL2 API and have read through the
 `element.js` and `frag.glsl` source, you will be able to figure out how to
-access the project internals. For example:
+access the various project internals. For example:
 
 ``` js
 const fontLocation = gl.getUniformLocation(textmode.program, "font");
