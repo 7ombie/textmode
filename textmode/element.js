@@ -61,7 +61,7 @@ class Texture {
         GPU.uniform1i(location, this.#index);
     }
 
-    get blocks() { return this.array.length / this.pitch }
+    get width() { return this.array.length / this.pitch }
 
     upload() {
 
@@ -70,7 +70,7 @@ class Texture {
         GPU.activeTexture(this.#GPUindex);
         GPU.bindTexture(GPU.TEXTURE_2D, this.#sampler2D);
         GPU.texImage2D(
-            GPU.TEXTURE_2D, 0, this.#GPUformat, this.blocks, 1, 0,
+            GPU.TEXTURE_2D, 0, this.#GPUformat, this.width, 1, 0,
             this.#format, GPU.UNSIGNED_BYTE, this.array
         );
     }

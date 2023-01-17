@@ -2,5 +2,6 @@
 .Trashes
 *.swp
 
-test.html
-test.js
+test.*
+test.*
+notes.*

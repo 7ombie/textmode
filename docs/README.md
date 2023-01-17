@@ -322,21 +322,19 @@ Texture Attributes
 As well as the `array` attribute and `update` method, each texture instance
 also has a couple of readonly computed properties:
 
-+ `blocks`: The number of blocks (texels) in the `Uint8Array`.
-+ `pitch`: The number of bytes in each block (on the CPU).
++ `width`: The length of the `Uint8Array` in texels (the number of blocks).
++ `pitch`: The length of each texel in bytes (the blocksize).
 
-Note: The value of the `pitch` property is always `3` for palette textures,
-and `4` for state and font textures. The `blocks` attribute is constant for
-the font and palette (which are always the same length), but varies for the
-state array, depending on the (current) number of columns and rows.
+Note: The `width` attribute is constant for the font and palette (which are
+always the same length), but varies for the state array, depending on the
+(current) number of columns and rows. The value of the `pitch` property
+is always `3` for a palette texture, and `4` for the state or font.
 
-The `pitch` and `blocks` attributes align well with the structure of the data
+The `width` and `pitch` attributes align well with the structure of the data
 in the state and palette arrays. The state uses four bytes per texel *and* per
 character cell, while the palette uses three bytes per texel *and* per color.
-
 These attributes are less applicable to the font, where a texel corresponds
-to an (aligned) pair of rows within a glyph (requiring sixteen texels to
-encode each glyph).
+to an (aligned) pair of rows within a glyph somewhere.
 
 
 The Program Attribute
