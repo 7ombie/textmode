@@ -365,6 +365,33 @@ const fontLocation = gl.getUniformLocation(textmode.program, "font");
 ```
 
 
+A Little Hello World
+--------------------
+
+Below is a simple hello-world program that puts all the parts together:
+
+``` js
+import Textmode from "/textmode/element.js"
+
+const random = () => Math.floor(Math.random() * 256);
+const encode = character => character.charCodeAt();
+
+const message = " [8-bit, High-Definition, Bitmapped, Textmode] ";
+const textmode = new Textmode(message.length, 1);
+
+Array.from(message).forEach(function(character, index) {
+
+    const [ordinal, ink, paper, tint] = [encode(character), 15, 0, random()];
+
+    textmode.state.array.set([ordinal, ink, paper, tint], index * 4);
+});
+
+document.body.append(textmode);
+textmode.state.upload();
+textmode.render(.4);
+```
+
+
 Copying & Licensing
 -------------------
 
