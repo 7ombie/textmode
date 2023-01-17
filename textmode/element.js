@@ -159,12 +159,13 @@ export default class HTMLTextmodeElement extends HTMLCanvasElement {
         GPU.drawArrays(GPU.TRIANGLES, 0, 6);
     }
 
-    reset(columns=80, rows=25) {
+    reset(columns=null, rows=null) {
 
         const GPU = this.getContext("webgl2");
 
-        this.width = (this.#columns = columns) * 16;
-        this.height = (this.#rows = rows) * 32;
+        if (columns !== null) this.width = (this.#columns = columns) * 16;
+        if (rows !== null) this.height = (this.#rows = rows) * 32;
+
         this.state.array = new Uint8Array(columns * rows * 4);
 
         GPU.viewport(0, 0, GPU.drawingBufferWidth, GPU.drawingBufferHeight);

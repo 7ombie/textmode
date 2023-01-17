@@ -36,8 +36,8 @@ The API entrypoint is an ES6 module named `element.js`, which exports the
 *textmode class*.
 
 Assuming that the `textmode` directory (from the project root directory) has
-been copied to the same directory the importing module, the textmode class
-could then be imported like this:
+been copied to the directory that (also) contains the importing module, then
+the textmode class could be imported like this:
 
 ``` js
 import Textmode from "./textmode/element.js"
@@ -49,9 +49,9 @@ If you inspect the textmode class in DevTools, it has the following type:
 class HTMLTextmodeElement extends HTMLCanvasElement
 ```
 
-While the name of the textmode class is proper for a custom HTML element, as
-the default export of its module, the class can be directly imported using
-any name we like. The convention here is to simply use `Textmode`.
+While the proper name of the textmode class is `HTMLTextmodeElement`, it is
+the default export of its module, so it can be directly imported using any
+name we like. The convention here is to simply use `Textmode`.
 
 The textmode class can be invoked to instantiate a *textmode element*. Each
 textmode element can have any number of columns and rows (optionally passed
@@ -101,9 +101,8 @@ While custom elements can be created in multiple ways, directly invoking the
 constructor has the advantage of allowing you to initialize an element with
 the desired number of columns and rows.
 
-Note: It is always possible to modify the dimensions of a textmode element
-after it has been instantiated by *resetting* it. See the section named
-*Textmode Reset* below.
+Note: The dimensions of a textmode element can be modified after it has been
+instantiated by *resetting* it. See the section named *Textmode Reset* below.
 
 Note: Textmode elements *are* canvas elements, so they have the entire API
 that a regular canvas element would have, as well as the textmode API.
@@ -121,9 +120,6 @@ state will be rendered (by the shader) during the next render call.
 To make it easy to upload the arrays, they are wrapped by a `Texture` class
 that provides an `upload` method. The method takes no arguments, and simply
 copies the bytes (from the `Uint8Array`) to the GPU (as a texture).
-
-The module (`element.js`) only exports the `Textmode` class, but that class
-uses instances of the `Texture` class for three of its attributes.
 
 Each textmode instance has `state`, `font` and `palette` attributes, which
 each reference the corresponding `Texture` instance, with the `Uint8Array`
@@ -239,7 +235,7 @@ tradtional Higher ASCII character set (like PETSCII). Furthermore, some of
 the ASCII glyphs (like tilde) will also be replaced with better-looking
 alternatives (that are provided by Terminus).
 
-*The default form of any glyph (and even its mapping) may change soon*.
+**The font and character mapping are currently subject to change**.
 
 
 Textmode Attributes
@@ -258,31 +254,36 @@ numeric attributes that come in handy when describing a textmode canvas:
 Textmode Reset
 --------------
 
-To permit resetting and resizing textmode elements after their instantiation,
-elements have a `reset` method with the following type:
+To permit resetting (and optionally resizing) textmode elements after their
+instantiation, elements have a `reset` method.
 
-    columns=80, rows=25 -> undefined
+The method takes two optional arguments, one for setting the columns, and
+another for the rows. This signature is similar to the signature for the
+textmode constructor, but the defaults are the current values of the
+`columns` and `rows` attributes (not `80` and `25`):
 
-This is the same signature as the constructor, and the arguments have the
-same semantics.
+``` js
+textmode.reset();           // reset textmode, preserving dimensions
+textmode.reset(x);          // reset with `x` columns, preserving rows
+textmode.reset(null, y);    // reset with `y` rows, preserving columns
+textmode.reset(x, y);       // reset with `x` columns and `y` rows
+```
 
-Resetting a textmode element causes a new, empty `Uint8Array` to be created
-with the required number of bytes (`columns * rows * 4`), and then assigned
-to `textmode.state.array`.
+Note: Both arguments actually default to `null` (which is then replaced with
+the current defaults), so you can pass `null` or `undefined` for the default.
 
-Note: If you need the data in the state array to persist across a reset, you
-need to create a reference to it, adapt it to fit the new dimensions, then
-copy the data to the new state array after the reset.
+*Resetting a textmode element is destructive*. A new (empty) `Uint8Array` is
+created with the required number of bytes (`columns * rows * 4`), which is
+assigned to `textmode.state.array` (leaving the old array to be garbage
+collected, unless some other reference persists).
 
 The corresponding values (`columns`, `rows`, `cells` and `bytes`) will reflect
 the new dimensions. Related properties, inherited from the `HTMLCanvasElement`
 class (like `width` and `height`) will also reflect the changes.
 
-The `fader` and the `font` and `palette` textures are completely unaffected,
-and the shader program has internal uniforms for the width and height that
-are updated (without requiring the shader to be reinitialized), making a
-reset relatively light (though new textmode elements are not expensive
-(once the textmode module has loaded) either).
+The `fader`, `font` and `palette` attributes are completely unaffected. The
+shader program has internal uniforms for its width and height that are updated
+(without requiring a (more costly) reinitialization of the shader).
 
 You can also cause a reset by assigning to the `columns` or `rows` attributes,
 which has the same effect as invoking `reset` with the corresponding value and
@@ -290,15 +291,14 @@ the unspecified value defaulting to its current value. For example, these
 two lines are equivalent:
 
 ``` js
-textmode.reset(textmode.columns, textmode.rows + 1)
+textmode.reset(null, textmode.rows + 1)
 textmode.rows++;
 ```
 
-Note: It is possible to copy the data from the state array, before swapping it
-for one with the required length, then to copy each line (or as much of it as
-will fit) back to the new state array, but this is beyond the scope of the
-"simple, low-level" textmode API, and not especially useful in practice,
-so it must be done manually, as and where required.
+Note: It is possible to create a reference the state array, before resetting
+it, then copy each line (or as much of it as will still fit) back to the new
+state array. However, this is beyond the scope of a "simple, low-level" API,
+and not likely to be used often in practice, so it was not included.
 
 
 Texture Attributes
