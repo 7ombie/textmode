@@ -18,7 +18,7 @@ Note: Currently FireFox and Safari fail (at the first hurdle), as neither
 browser is able to import values from JSON files.
 
 The licensing is open source (and viral). Refer to the *Copying & Licensing*
-section (at very end of this readme) for more information.
+section (at very end of this README) for more information.
 
 
 The Textmode API
@@ -28,7 +28,7 @@ The Textmode API is small and simple. The implementation relies on private
 attributes to hide all of its (WebGL2) internals from the user.
 
 Note: It is possible to access the guts of the implementation, should you
-ever need to (see *The Program Attribute* later in this readme).
+ever need to (see *The Program Attribute* later in this README).
 
 ### The Entrypoint
 
@@ -63,7 +63,7 @@ const textmode = new Textmode(16, 2); // columns, rows
 
 Note: Both arguments are optional, defaulting to `80` and `25` respectively.
 
-Note: The rationale for the defaults is beyond the scope of this readme.
+Note: The rationale for the defaults is beyond the scope of this README.
 
 Naturally, a textmode element must be appended to the DOM to be visible:
 
@@ -202,6 +202,10 @@ Note: The textmode uses RGB color. There is no direct support for opacity.
 Whenever a cursor leaves a cell, you simply set the tint color of the cell
 to match the paper again.
 
+Note: This may seem like an unnecessarily awkward approach, but it will make
+sense as you begin to use it. A bunch of more obvious designs were tested,
+and the current design took the best bits from each.
+
 Note: In practice, background colors do not change very often, except during
 operations like scrolling, character insertions and deletions etc (when cells
 get block-copied to a different location on screen), but in those cases, the
@@ -211,6 +215,10 @@ Note: Somewhat counter-intuitively, GPU performance would be harmed more by
 logic that checked and conditionally mixed colors for only those cells that
 currently contain a cursor than it is harmed by unconditionally (but always,
 consistently) mixing the colors for every cell.
+
+Note: Having some means for storing the cursor color in the character cell
+(directly), without clobbering the background color, turns out to be very
+useful in practice.
 
 ### The Default Font
 
@@ -300,6 +308,13 @@ it, then copy each line (or as much of it as will still fit) back to the new
 state array. However, this is beyond the scope of a "simple, low-level" API,
 and not likely to be used often in practice, so it was not included.
 
+Note: You will often want to maintain multiple state buffers that can be
+quickly swapped in and out by assigning the currently required buffer to
+`textmode.state.array`. This *does not* require a reset. You can do this
+with `textmode.font.array` and `textmode.palette.array` as well. As long
+as the `Uint8Array` is the correct length, you can upload it to the GPU
+as normal.
+
 
 Texture Attributes
 ------------------
@@ -353,14 +368,15 @@ const fontLocation = gl.getUniformLocation(textmode.program, "font");
 Copying & Licensing
 -------------------
 
-The various licenses that this project uses are much larger than the project
-itself. For that reason, this readme includes links to the licenses, and this
-general declaration (instead of notices at the top of each source file).
+The various licenses that this project uses are far larger than the project
+itself (this README is almost three times bigger than the source). For that
+reason, this README includes links to the licenses, as well as this general
+declaration (instead of notices at the top of each source file).
 
 The code (`element.js`, `frag.glsl` and `vert.glsl`) is published under the
 terms of [the GPL License][3] (version 3 or later).
 
-This readme (and any documentation added to the `docs` directory over time)
+This README (and any documentation added to the `docs` directory over time)
 uses the [GNU Free Documentation License][8] (version 1.3 or later).
 
 The font and palette are not original to this project.
