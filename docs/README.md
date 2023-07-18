@@ -94,7 +94,7 @@ use the DOM API, though you would still need to trigger the textmode module
 to register the custom element:
 
 ``` js
-import _ from "./textmode/element.js"
+import "./textmode/element.js"
 ```
 
 While custom elements can be created in multiple ways, directly invoking the
@@ -374,17 +374,16 @@ import Textmode from "/textmode/element.js"
 const random = () => Math.floor(Math.random() * 256);
 const encode = character => character.charCodeAt();
 
-const message = " [8-bit, High-Definition, Bitmapped, Textmode] ";
+const message = " [8-bit, High-Definition, Bitmapped Textmode] ";
 const textmode = new Textmode(message.length, 1);
 
+document.body.append(textmode);
+
 Array.from(message).forEach(function(character, index) {
-
     const [ordinal, ink, paper, tint] = [encode(character), 15, 0, random()];
-
     textmode.state.array.set([ordinal, ink, paper, tint], index * 4);
 });
 
-document.body.append(textmode);
 textmode.state.upload();
 textmode.render(.4);
 ```
